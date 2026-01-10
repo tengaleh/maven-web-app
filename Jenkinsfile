@@ -20,7 +20,7 @@ pipeline {
                 sh '''
                 curl -u tomcat:tomcat123 \
                 -T target/maven-web-app.war \
-                http://<TOMCAT-IP>:8080/manager/text/deploy?path=/maven-web-app&update=true
+                http://http://54.226.145.246:8080/manager/text/deploy?path=/maven-web-app&update=true
                 '''
             }
         }
