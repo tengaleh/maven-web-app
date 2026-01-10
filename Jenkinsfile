@@ -18,10 +18,10 @@ pipeline {
         stage('Deploy to Tomcat') {
             steps {
                 deploy adapters: [
-                    tomcat11(
+                    tomcat(
                         credentialsId: 'tomcat-creds',
                         path: '',
-                        url: 'http://<TOMCAT-IP>:8080'
+                        url: 'http://54.226.145.246:8080/'
                     )
                 ],
                 contextPath: 'maven-web-app',
