@@ -31,8 +31,16 @@ pipeline {
             steps {
                 sh '''
                 rm -rf $TOMCAT_HOME/webapps/$APP_NAME*
-                cp target/$APP_NAME.war $TOMCAT_HOME/webapps/
-                '''
+                echo 'Deploying the application to Tomcat...'
+                script {
+                    def warFile = "${APP_NAME}.war"
+                    // Copy the generated .war file from the Jenkins workspace to the Tomcat webapps directory
+                    sshPut remote: "${TOMCAT_HOME}/webapps/${warFile}",
+                            server: '52.90.133.114', // Replace with your Tomcat server IP
+                            credentials: 'slave-ssh-key', // The ID from Jenkins Credentials Manager
+                            from: "target/${warFile}" // Location of the .war file after the Maven build
+                }
+                echo 'Deployment successful. Application should be available at http://<tomcat-server-ip>:8080/my-webapp'
             }
         }
         stage('Start Tomcat') {
