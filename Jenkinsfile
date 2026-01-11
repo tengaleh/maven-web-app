@@ -38,7 +38,7 @@ pipeline {
         stage('Start Tomcat') {
             steps {
                 sh '''
-                $TOMCAT_HOME/bin/startup.sh
+                /opt/tomcat/bin/startup.sh
                 '''
             }
         }
