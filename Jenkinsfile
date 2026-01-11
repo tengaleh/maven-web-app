@@ -28,10 +28,11 @@ pipeline {
             }
         }
         stage('Deploy WAR to Tomcat') {
-            steps {
+         steps {
                 sh '''
                 rm -rf $TOMCAT_HOME/webapps/$APP_NAME*
-                                
+                cp target/$APP_NAME.war $TOMCAT_HOME/webapps/
+                '''
             }
         }
         stage('Start Tomcat') {
