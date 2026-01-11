@@ -1,13 +1,18 @@
 pipeline {
-    agent any
+    agent {
+        label 'slave-node-1'
+    }
     tools {
         maven 'MAVEN3'
     }
+    environment {
+        TOMCAT_HOME = "/opt/tomcat"
+        APP_NAME = "maven-web-app"
+    }
     stages {
-        stage('Checkout Code') {
+        stage('Checkout Source Code') {
             steps {
-                git branch: 'main',
-                    url: 'https://github.com/tengaleh/maven-web-app.git'
+                echo "Code checked out from SCM automatically"
             }
         }
         stage('Build with Maven') {
@@ -15,22 +20,35 @@ pipeline {
                 sh 'mvn clean package'
             }
         }
-        stage('Deploy to Tomcat') {
+        stage('Stop Tomcat') {
             steps {
                 sh '''
-                curl -u tomcat:tomcat123 \
-                -T target/maven-web-app.war \
-                http://54.226.145.246:8080/manager/text/deploy?path=/maven-web-app&update=true
+                $TOMCAT_HOME/bin/shutdown.sh || true
+                '''
+            }
+        }
+        stage('Deploy WAR to Tomcat') {
+            steps {
+                sh '''
+                rm -rf $TOMCAT_HOME/webapps/$APP_NAME*
+                cp target/$APP_NAME.war $TOMCAT_HOME/webapps/
+                '''
+            }
+        }
+        stage('Start Tomcat') {
+            steps {
+                sh '''
+                $TOMCAT_HOME/bin/startup.sh
                 '''
             }
         }
     }
     post {
         success {
-            echo 'Deployment Successful!'
+            echo "Application deployed successfully using Jenkinsfile from SCM"
         }
         failure {
-            echo 'Deployment Failed!'
+            echo "Pipeline failed"
         }
     }
 }
