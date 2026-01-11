@@ -23,7 +23,7 @@ pipeline {
         stage('Stop Tomcat') {
             steps {
                 sh '''
-                $TOMCAT_HOME/bin/shutdown.sh || true
+                $TOMCAT_HOME/bin/shutdown.sh
                 '''
             }
         }
